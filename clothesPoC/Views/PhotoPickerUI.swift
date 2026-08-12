@@ -49,7 +49,7 @@ struct PhotoPickerUI: View {
                     )
                     
                     if let result = try? await model.classify(capturedImage) {
-                        clothesTitle = result.roupa.rawValue
+                        clothesTitle = result.roupa.displayClothes
                         print(result)
                         print(capturedImage)
                     }
