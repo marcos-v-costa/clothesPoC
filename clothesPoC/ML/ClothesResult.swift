@@ -7,8 +7,10 @@
 
 import Foundation
 import SwiftUI
+import SwiftData
 
-enum ClothesResult: String, CaseIterable, Equatable, Sendable {
+enum ClothesResult: String, Identifiable, CaseIterable, Equatable, Sendable, Codable {
+    var id: Self { self }
     case calca
     case sapato
     case camisa

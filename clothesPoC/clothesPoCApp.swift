@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct clothesPoCApp: App {
@@ -13,5 +14,7 @@ struct clothesPoCApp: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(for: [Clothes.self])
+
     }
 }
