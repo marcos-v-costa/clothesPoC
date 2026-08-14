@@ -13,7 +13,7 @@ struct ContentView: View {
     @Query(sort: \Clothes.title) var clothes: [Clothes]
     @State var showAddTaskSheet: Bool = false
 
-    private let columns = [
+    let columns = [
         GridItem(.flexible(), spacing: 8),
         GridItem(.flexible(), spacing: 8)
     ]
@@ -29,14 +29,14 @@ struct ContentView: View {
                 } else {
                     ScrollView {
                         LazyVGrid(columns: columns, spacing: 32) {
-                            ForEach(clothes) { item in
-                                NavigationLink(destination: ClothesDetailView(clothes: item)) {
-                                    ClothesRow(clothes: item)
+                            ForEach(clothes) { clothes in
+                                NavigationLink(destination: ClothesDetailView(clothes: clothes)) {
+                                    ClothesRow(clothes: clothes)
                                 }
                                 .buttonStyle(.plain)
                                 .contextMenu {
                                     Button(role: .destructive) {
-                                        modelContext.delete(item)
+                                        modelContext.delete(clothes)
                                     } label: {
                                         Label("Excluir", systemImage: "trash")
                                     }

@@ -17,8 +17,7 @@ class Clothes {
 
     init(title: String,
          type: ClothesResult,
-         image: Data? = nil,
-         dateAdded: Date = .now) {
+         image: Data? = nil) {
         self.title = title
         self.type = type
         self.image = image

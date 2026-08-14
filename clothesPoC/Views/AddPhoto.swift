@@ -27,28 +27,27 @@ struct AddPhoto: View {
             Form {
                 Section(header: Text("Selecionar roupa")) {
                     PhotosPicker(selection: $selectedItem, matching: .images) {
-
-                            if let photo, let uiImage = UIImage(data: photo) {
-                                HStack(alignment: .center) {
-                                    Image(uiImage: uiImage)
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(height: 300)
-                                        .frame(maxWidth: .infinity)
-                                        .clipShape(RoundedRectangle(cornerRadius: 16))
-                                }
-                                .frame(maxWidth: .infinity)
-                            } else {
-                                HStack(alignment: .center) {
-                                    Image(systemName: "photo.badge.plus.fill")
-                                        .font(.largeTitle)
-                                        .frame(height: 200)
-                                        .frame(maxWidth: .infinity)
-                                        .background(Color(white: 0.4, opacity: 0.2))
-                                        .clipShape(RoundedRectangle(cornerRadius: 16))
-                                }
-                                .frame(maxWidth: .infinity)
+                        if let photo, let uiImage = UIImage(data: photo) {
+                            HStack(alignment: .center) {
+                                Image(uiImage: uiImage)
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(height: 300)
+                                    .frame(maxWidth: .infinity)
+                                    .clipShape(RoundedRectangle(cornerRadius: 16))
                             }
+                            .frame(maxWidth: .infinity)
+                        } else {
+                            HStack(alignment: .center) {
+                                Image(systemName: "photo.badge.plus.fill")
+                                    .font(.largeTitle)
+                                    .frame(height: 200)
+                                    .frame(maxWidth: .infinity)
+                                    .background(Color(white: 0.4, opacity: 0.2))
+                                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
                         
                     }
                     
@@ -63,9 +62,9 @@ struct AddPhoto: View {
                                     cgImage: cgImage,
                                     orientation: uiImage.imageOrientation.cgImagePropertyOrientation
                                 )
-                                    let cutoutCGImage = try backgroundRemoval.removeBackground(capturedImage)
-                                    let cutoutImage = UIImage(cgImage: cutoutCGImage)
-                                    photo = cutoutImage.pngData()
+                                let cutoutCGImage = try backgroundRemoval.removeBackground(capturedImage)
+                                let cutoutImage = UIImage(cgImage: cutoutCGImage)
+                                photo = cutoutImage.pngData()
                                 
                                 if let result = try? await model.classify(capturedImage) {
                                     clothesTitle = result.roupa.displayClothes
