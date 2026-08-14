@@ -12,60 +12,61 @@ struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Clothes.title) var clothes: [Clothes]
     @State var showAddTaskSheet: Bool = false
-    
+
+    private let columns = [
+        GridItem(.flexible(), spacing: 8),
+        GridItem(.flexible(), spacing: 8)
+    ]
+
     var body: some View {
         NavigationStack {
-            VStack {
-                if !clothes.isEmpty {
-                    List {
-                        ForEach(clothes) { clothes in
-                            NavigationLink {
-                                ClothesDetailView(clothes: clothes)
-                            } label: {
-                                Image(systemName: "book.fill")
-                                VStack(alignment: .leading){
-                                    Text(clothes.title)
-                                        .font(.headline)
+            Group {
+                if clothes.isEmpty {
+                    Text("Nenhuma roupa cadastrada")
+                        .font(.title)
+                        .bold()
+                        .foregroundStyle(.secondary)
+                } else {
+                    ScrollView {
+                        LazyVGrid(columns: columns, spacing: 32) {
+                            ForEach(clothes) { item in
+                                NavigationLink(destination: ClothesDetailView(clothes: item)) {
+                                    ClothesRow(clothes: item)
                                 }
-                            }
-                            .swipeActions(edge: .trailing) {
-                                Button(role: .destructive) {
-                                    modelContext.delete(clothes)
+                                .buttonStyle(.plain)
+                                .contextMenu {
+                                    Button(role: .destructive) {
+                                        modelContext.delete(item)
+                                    } label: {
+                                        Label("Excluir", systemImage: "trash")
+                                    }
                                 }
                             }
                         }
+                        .padding(32)
                     }
-                    .toolbar {
-                        ToolbarItem(placement: .topBarTrailing) {
-                            Button(action: {
-                                showAddTaskSheet.toggle()
-                            }) {
-                                Image(systemName: "plus")
-                            }
-                        }
-                    }
-                    .navigationTitle("Roupas")
                 }
-                else {
-                    Text("Nenhuma roupa cadastrada").font(.title).bold(true)
-                        .toolbar {
-                            ToolbarItem(placement: .topBarTrailing) {
-                                Button(action: {
-                                    showAddTaskSheet.toggle()
-                                }) {
-                                    Image(systemName: "plus")
-                                }
-                            }
-                        }
-                        .navigationTitle("Pra fazer")
+            }
+            .navigationTitle("Roupas")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: {
+                        showAddTaskSheet.toggle()
+                    }) {
+                        Image(systemName: "plus")
+                    }
                 }
             }
             .sheet(isPresented: $showAddTaskSheet) {
                 AddPhoto(clothes: [])
             }
         }
-    }}
+    }
+}
 
 #Preview {
+    let configuration = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: Clothes.self, configurations: configuration)
     ContentView()
+        .modelContainer(container)
 }

@@ -20,13 +20,14 @@ struct AddPhoto: View {
     
     let clothes: [Clothes]
     let model = ClothesClassificationService()
+    let backgroundRemoval = BackgroundRemovalService()
     
     var body: some View {
         NavigationStack {
             Form {
                 Section(header: Text("Selecionar roupa")) {
-                    PhotosPicker(selection: $selectedItem) {
-                        Group {
+                    PhotosPicker(selection: $selectedItem, matching: .images) {
+
                             if let photo, let uiImage = UIImage(data: photo) {
                                 HStack(alignment: .center) {
                                     Image(uiImage: uiImage)
@@ -41,14 +42,14 @@ struct AddPhoto: View {
                                 HStack(alignment: .center) {
                                     Image(systemName: "photo.badge.plus.fill")
                                         .font(.largeTitle)
-                                        .frame(height: 300)
+                                        .frame(height: 200)
                                         .frame(maxWidth: .infinity)
                                         .background(Color(white: 0.4, opacity: 0.2))
                                         .clipShape(RoundedRectangle(cornerRadius: 16))
                                 }
                                 .frame(maxWidth: .infinity)
                             }
-                        }
+                        
                     }
                     
                     .listRowBackground(Color.clear)
@@ -58,12 +59,13 @@ struct AddPhoto: View {
                                let uiImage = UIImage(data: loaded),
                                let cgImage = uiImage.cgImage {
                                 
-                                photo = loaded
-                                
                                 let capturedImage = CapturedImage(
                                     cgImage: cgImage,
                                     orientation: uiImage.imageOrientation.cgImagePropertyOrientation
                                 )
+                                    let cutoutCGImage = try backgroundRemoval.removeBackground(capturedImage)
+                                    let cutoutImage = UIImage(cgImage: cutoutCGImage)
+                                    photo = cutoutImage.pngData()
                                 
                                 if let result = try? await model.classify(capturedImage) {
                                     clothesTitle = result.roupa.displayClothes
@@ -109,7 +111,6 @@ struct AddPhoto: View {
     func addClothes() {
         let newClothes = Clothes(title: clothesTitle, type: clothesCategory, image: photo)
         modelContext.insert(newClothes)
-        print("aaa")
     }
     
 }
