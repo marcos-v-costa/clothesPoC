@@ -15,7 +15,7 @@ enum BackgroundRemovalError: Error {
     case message(String)
 }
 
-struct BackgroundRemovalService {
+class BackgroundRemovalService {
 
     private let context = CIContext()
 
